@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+
+#define N 10
+#define DITE 7
+#define STOK_NORMAL 10   // prag për stok normal
+
+// 1. Struktura product
+typedef struct {
+    char emri[50];
+    char prodhuesi[50];
+    float cmimi;
+    int sasia;
+} Product;
+
+// 3. Funksion për afishim të produkteve
+void afishoProdukte(Product p[], int n) {
+    for(int i = 0; i < n; i++) {
+        printf("%s = %s = %.2f = %d\n",
+               p[i].emri,
+               p[i].prodhuesi,
+               p[i].cmimi,
+               p[i].sasia);
+    }
+}
+
+// 4. Produkte me stok normal
+void stokNormal(Product p[], int n) {
+    printf("\nProdukte me stok normal:\n");
+    for(int i = 0; i < n; i++) {
+        if(p[i].sasia >= STOK_NORMAL) {
+            printf("%s (%d)\n", p[i].emri, p[i].sasia);
+        }
+    }
+}
+
+// 6. Funksion për shitje
+void shitjeProdukt(Product p[], int shitje[N][DITE], int n) {
+    char emri[50], prodhuesi[50];
+    int sasi;
+
+    printf("\nJep emrin e produktit: ");
+    scanf("%s", emri);
+    printf("Jep prodhuesin: ");
+    scanf("%s", prodhuesi);
+    printf("Jep sasine per shitje: ");
+    scanf("%d", &sasi);
+
+    for(int i = 0; i < n; i++) {
+        if(strcmp(p[i].emri, emri) == 0 &&
+           strcmp(p[i].prodhuesi, prodhuesi) == 0) {
+
+            if(p[i].sasia >= sasi) {
+                p[i].sasia -= sasi;
+                shitje[i][DITE-1] += sasi; // dita e fundit
+                printf("Shitja u realizua!\n");
+            } else {
+                printf("Sasi e pamjaftueshme ne stok!\n");
+            }
+            return;
+        }
+    }
+
+    printf("Produkti nuk u gjet!\n");
+}
+
+// 7. Totali i shitjeve dhe fitimi
+void llogaritTotale(Product p[], int shitje[N][DITE], int n) {
+    for(int i = 0; i < n; i++) {
+        int totalShitje = 0;
+
+        for(int j = 0; j < DITE; j++) {
+            totalShitje += shitje[i][j];
+        }
+
+        float fitimi = totalShitje * p[i].cmimi;
+
+        printf("\nProdukti: %s\n", p[i].emri);
+        printf("Totali shitjeve: %d\n", totalShitje);
+        printf("Fitimi total: %.2f\n", fitimi);
+    }
+}
+
+// MAIN
+int main() {
+
+    // 2. Inicializimi i vektorit me 10 produkte
+    Product p[N] = {
+        {"Buke", "FirmaA", 100, 20},
+        {"Qumesht", "FirmaB", 150, 15},
+        {"Djath", "FirmaC", 300, 8},
+        {"Veze", "FirmaD", 20, 50},
+        {"Oriz", "FirmaE", 120, 25},
+        {"Sheqer", "FirmaF", 90, 30},
+        {"Vaj", "FirmaG", 200, 12},
+        {"Makarona", "FirmaH", 80, 18},
+        {"Kafe", "FirmaI", 500, 5},
+        {"Caj", "FirmaJ", 250, 22}
+    };
+
+    // 5. Matrica e shitjeve
+    int shitje[N][DITE] = {0};
+
+    // dita e fundit = pa shitje (automatikisht 0)
+
+    afishoProdukte(p, N);
+    stokNormal(p, N);
+
+    shitjeProdukt(p, shitje, N);
+
+    llogaritTotale(p, shitje, N);
+
+    return 0;
+}
